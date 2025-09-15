@@ -5,7 +5,7 @@ a = Analysis(
     ['run.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('CRM_System/locales', 'CRM_System/locales')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
