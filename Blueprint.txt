@@ -1,0 +1,504 @@
+Blueprint para un Sistema CRM en Python con SQLite
+Investigación de CRM Líderes del Mercado
+Análisis de Funcionalidades Clave en CRM
+He analizado los principales CRM del mercado (Salesforce, HubSpot, Microsoft Dynamics, Zoho CRM) y he identificado las funcionalidades esenciales:
+
+Gestión de Contactos
+
+Base de datos centralizada de clientes y prospectos
+
+Campos personalizables (nombre, empresa, cargo, información de contacto)
+
+Historial completo de interacciones
+
+Segmentación y etiquetado avanzado
+
+Gestión de Oportunidades y Ventas
+
+Pipeline visual de ventas
+
+Etapas personalizables del funnel
+
+Valor y probabilidad de cierre
+
+Forecast de ingresos
+
+Automatización de seguimientos
+
+Gestión de Actividades
+
+Calendario integrado
+
+Recordatorios y notificaciones
+
+Gestión de tareas y eventos
+
+Seguimiento de emails y llamadas
+
+Reportes y Dashboards
+
+Métricas de rendimiento (KPI)
+
+Reportes personalizables
+
+Dashboards visuales
+
+Análisis de conversión
+
+Características Adicionales
+
+Integración con email y calendario
+
+Automatización de marketing
+
+Gestión de documentos
+
+Mobile accessibility
+
+APIs para integraciones
+
+Blueprint para CRM en Python con SQLite
+1. Arquitectura del Sistema
+text
+CRM_System/
+│
+├── main.py                 # Punto de entrada principal
+├── database/
+│   └── crm_database.db    # Base de datos SQLite
+├── models/                # Modelos de datos
+│   ├── __init__.py
+│   ├── contact.py
+│   ├── opportunity.py
+│   ├── activity.py
+│   └── user.py
+├── views/                 # Interfaces de usuario
+│   ├── __init__.py
+│   ├── main_window.py
+│   ├── contact_view.py
+│   ├── opportunity_view.py
+│   └── dashboard_view.py
+├── controllers/           # Lógica de negocio
+│   ├── __init__.py
+│   ├── database_controller.py
+│   ├── contact_controller.py
+│   └── opportunity_controller.py
+├── utils/                 # Utilidades
+│   ├── __init__.py
+│   ├── validators.py
+│   └── helpers.py
+└── requirements.txt       # Dependencias del proyecto
+2. Esquema de Base de Datos Detallado
+sql
+-- Tabla de Usuarios
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    email TEXT NOT NULL,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    role TEXT DEFAULT 'user',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_login DATETIME
+);
+
+-- Tabla de Contactos
+CREATE TABLE contacts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    company TEXT,
+    job_title TEXT,
+    email TEXT,
+    phone TEXT,
+    mobile_phone TEXT,
+    address TEXT,
+    city TEXT,
+    state TEXT,
+    country TEXT,
+    postal_code TEXT,
+    website TEXT,
+    source TEXT,
+    status TEXT DEFAULT 'lead',
+    assigned_to INTEGER,
+    notes TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (assigned_to) REFERENCES users (id)
+);
+
+-- Tabla de Oportunidades
+CREATE TABLE opportunities (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    contact_id INTEGER NOT NULL,
+    value REAL NOT NULL,
+    stage TEXT NOT NULL DEFAULT 'prospecting',
+    probability INTEGER DEFAULT 10,
+    close_date DATE,
+    description TEXT,
+    assigned_to INTEGER,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (contact_id) REFERENCES contacts (id),
+    FOREIGN KEY (assigned_to) REFERENCES users (id)
+);
+
+-- Tabla de Actividades
+CREATE TABLE activities (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    type TEXT NOT NULL, -- 'call', 'email', 'meeting', 'task'
+    subject TEXT NOT NULL,
+    description TEXT,
+    related_to INTEGER, -- contact_id or opportunity_id
+    related_type TEXT, -- 'contact' or 'opportunity'
+    due_date DATETIME,
+    completed BOOLEAN DEFAULT FALSE,
+    completed_date DATETIME,
+    assigned_to INTEGER,
+    priority TEXT DEFAULT 'medium',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (assigned_to) REFERENCES users (id)
+);
+
+-- Tabla de Interacciones
+CREATE TABLE interactions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    contact_id INTEGER NOT NULL,
+    type TEXT NOT NULL,
+    subject TEXT,
+    description TEXT,
+    date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    duration INTEGER, -- in minutes
+    outcome TEXT,
+    assigned_to INTEGER,
+    FOREIGN KEY (contact_id) REFERENCES contacts (id),
+    FOREIGN KEY (assigned_to) REFERENCES users (id)
+);
+
+-- Tabla de Etiquetas
+CREATE TABLE tags (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT UNIQUE NOT NULL,
+    color TEXT DEFAULT '#007bff'
+);
+
+-- Tabla de relación Contacto-Etiqueta
+CREATE TABLE contact_tags (
+    contact_id INTEGER,
+    tag_id INTEGER,
+    PRIMARY KEY (contact_id, tag_id),
+    FOREIGN KEY (contact_id) REFERENCES contacts (id),
+    FOREIGN KEY (tag_id) REFERENCES tags (id)
+);
+3. Implementación de Modelos de Datos
+python
+# models/contact.py
+from datetime import datetime
+from .base_model import BaseModel
+
+class Contact(BaseModel):
+    def __init__(self, first_name, last_name, email=None, phone=None, company=None):
+        self.id = None
+        self.first_name = first_name
+        self.last_name = last_name
+        self.email = email
+        self.phone = phone
+        self.company = company
+        self.job_title = None
+        self.status = 'lead'  # lead, prospect, customer, inactive
+        self.assigned_to = None
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
+        self.tags = []
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'email': self.email,
+            'phone': self.phone,
+            'company': self.company,
+            'job_title': self.job_title,
+            'status': self.status,
+            'assigned_to': self.assigned_to,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat()
+        }
+4. Controlador de Base de Datos
+python
+# controllers/database_controller.py
+import sqlite3
+from datetime import datetime
+from typing import List, Dict, Any
+
+class DatabaseController:
+    def __init__(self, db_path: str = 'database/crm_database.db'):
+        self.db_path = db_path
+        self.init_database()
+    
+    def init_database(self):
+        """Inicializa la base de datos con las tablas necesarias"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        # Ejecutar script de creación de tablas
+        with open('database/schema.sql', 'r') as f:
+            schema_sql = f.read()
+        
+        cursor.executescript(schema_sql)
+        conn.commit()
+        conn.close()
+    
+    def get_connection(self):
+        """Obtiene conexión a la base de datos"""
+        return sqlite3.connect(self.db_path)
+    
+    def execute_query(self, query: str, params: tuple = None):
+        """Ejecuta una query y retorna resultados"""
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        if params:
+            cursor.execute(query, params)
+        else:
+            cursor.execute(query)
+        
+        if query.strip().upper().startswith('SELECT'):
+            result = cursor.fetchall()
+        else:
+            conn.commit()
+            result = cursor.lastrowid
+        
+        conn.close()
+        return result
+    
+    def get_contacts(self, filters: Dict = None) -> List[Dict]:
+        """Obtiene contactos con filtros opcionales"""
+        query = """
+            SELECT c.*, GROUP_CONCAT(t.name) as tags
+            FROM contacts c
+            LEFT JOIN contact_tags ct ON c.id = ct.contact_id
+            LEFT JOIN tags t ON ct.tag_id = t.id
+        """
+        
+        where_clauses = []
+        params = []
+        
+        if filters:
+            for key, value in filters.items():
+                if value:
+                    where_clauses.append(f"c.{key} = ?")
+                    params.append(value)
+        
+        if where_clauses:
+            query += " WHERE " + " AND ".join(where_clauses)
+        
+        query += " GROUP BY c.id"
+        
+        results = self.execute_query(query, params)
+        return self._format_contact_results(results)
+5. Interfaz de Usuario con Tkinter
+python
+# views/main_window.py
+import tkinter as tk
+from tkinter import ttk, messagebox
+from controllers.contact_controller import ContactController
+
+class MainWindow(tk.Tk):
+    def __init__(self):
+        super().__init__()
+        self.title("Sistema CRM - Python")
+        self.geometry("1200x800")
+        self.contact_controller = ContactController()
+        
+        self.create_widgets()
+        self.load_contacts()
+    
+    def create_widgets(self):
+        # Panel principal
+        self.notebook = ttk.Notebook(self)
+        self.notebook.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        
+        # Pestaña de Contactos
+        self.contacts_frame = ttk.Frame(self.notebook)
+        self.notebook.add(self.contacts_frame, text="Contactos")
+        
+        # Toolbar
+        toolbar = ttk.Frame(self.contacts_frame)
+        toolbar.pack(fill=tk.X, pady=5)
+        
+        ttk.Button(toolbar, text="Nuevo Contacto", 
+                  command=self.show_new_contact_dialog).pack(side=tk.LEFT, padx=5)
+        ttk.Button(toolbar, text="Editar", 
+                  command=self.edit_contact).pack(side=tk.LEFT, padx=5)
+        ttk.Button(toolbar, text="Eliminar", 
+                  command=self.delete_contact).pack(side=tk.LEFT, padx=5)
+        
+        # Tabla de contactos
+        columns = ('id', 'nombre', 'empresa', 'email', 'teléfono', 'estado')
+        self.contacts_tree = ttk.Treeview(self.contacts_frame, columns=columns, show='headings')
+        
+        for col in columns:
+            self.contacts_tree.heading(col, text=col.capitalize())
+            self.contacts_tree.column(col, width=150)
+        
+        self.contacts_tree.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
+        
+        # Scrollbar
+        scrollbar = ttk.Scrollbar(self.contacts_frame, orient=tk.VERTICAL, 
+                                 command=self.contacts_tree.yview)
+        self.contacts_tree.configure(yscrollcommand=scrollbar.set)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+    
+    def load_contacts(self):
+        """Carga contactos en la tabla"""
+        for item in self.contacts_tree.get_children():
+            self.contacts_tree.delete(item)
+        
+        contacts = self.contact_controller.get_all_contacts()
+        for contact in contacts:
+            self.contacts_tree.insert('', tk.END, values=(
+                contact['id'],
+                f"{contact['first_name']} {contact['last_name']}",
+                contact['company'],
+                contact['email'],
+                contact['phone'],
+                contact['status']
+            ))
+    
+    def show_new_contact_dialog(self):
+        """Muestra diálogo para nuevo contacto"""
+        dialog = ContactDialog(self, "Nuevo Contacto")
+        self.wait_window(dialog)
+        if dialog.result:
+            self.contact_controller.create_contact(dialog.result)
+            self.load_contacts()
+6. Implementación de Funcionalidades Clave
+Autenticación y Seguridad:
+
+python
+# utils/auth.py
+import hashlib
+import secrets
+
+class AuthManager:
+    def hash_password(self, password: str) -> str:
+        """Hash seguro de contraseña"""
+        salt = secrets.token_hex(16)
+        return f"{salt}${hashlib.sha256((salt + password).encode()).hexdigest()}"
+    
+    def verify_password(self, password: str, hashed: str) -> bool:
+        """Verifica contraseña contra hash"""
+        salt, hash_value = hashed.split('$')
+        return hashlib.sha256((salt + password).encode()).hexdigest() == hash_value
+Sistema de Búsqueda Avanzada:
+
+python
+# controllers/search_controller.py
+class SearchController:
+    def search_contacts(self, query: str, filters: Dict = None) -> List[Dict]:
+        """Búsqueda avanzada en contactos"""
+        search_terms = query.split()
+        base_query = """
+            SELECT c.* FROM contacts c
+            WHERE (
+        """
+        
+        conditions = []
+        params = []
+        
+        for term in search_terms:
+            conditions.append("""
+                (c.first_name LIKE ? OR c.last_name LIKE ? 
+                 OR c.company LIKE ? OR c.email LIKE ? OR c.notes LIKE ?)
+            """)
+            params.extend([f"%{term}%"] * 5)
+        
+        base_query += " OR ".join(conditions) + ")"
+        
+        # Aplicar filtros adicionales
+        if filters:
+            filter_conditions = []
+            for key, value in filters.items():
+                if value:
+                    filter_conditions.append(f"c.{key} = ?")
+                    params.append(value)
+            
+            if filter_conditions:
+                base_query += " AND " + " AND ".join(filter_conditions)
+        
+        return self.db_controller.execute_query(base_query, params)
+7. Plan de Implementación por Fases
+Fase 1: Core del Sistema (2-3 semanas)
+
+Estructura del proyecto y configuración inicial
+
+Sistema de base de datos y modelos básicos
+
+Autenticación y gestión de usuarios
+
+Interfaz principal básica
+
+Fase 2: Gestión de Contactos (2 semanas)
+
+CRUD completo de contactos
+
+Búsqueda y filtrado
+
+Sistema de etiquetas
+
+Importación/exportación de datos
+
+Fase 3: Pipeline de Ventas (2 semanas)
+
+Gestión de oportunidades
+
+Pipeline visual
+
+Forecast de ventas
+
+Reportes básicos
+
+Fase 4: Automatización (1-2 semanas)
+
+Sistema de actividades y recordatorios
+
+Plantillas de email
+
+Dashboards avanzados
+
+Sistema de backup
+
+8. Dependencias y Requisitos Técnicos
+txt
+# requirements.txt
+PyQt5==5.15.9
+SQLAlchemy==2.0.23
+pandas==2.0.3
+numpy==1.24.3
+matplotlib==3.7.2
+python-dateutil==2.8.2
+email-validator==2.0.0
+pyinstaller==5.13.0
+9. Consideraciones de Performance
+Indexado de base de datos: Implementar índices en campos de búsqueda frecuentes
+
+Paginación: Implementar paginación en listas largas
+
+Caching: Cachear datos frecuentemente accedidos
+
+Conexiones de BD: Pool de conexiones para mejor performance
+
+10. Estrategia de Testing
+Unit tests para todos los controladores y modelos
+
+Integration tests para flujos completos
+
+UI testing con herramientas como pytest-qt
+
+Performance testing con datasets grandes
+
+Este blueprint proporciona una base sólida para desarrollar un CRM completo en Python con SQLite que incorpora las mejores funcionalidades de los CRM líderes del mercado, manteniendo la simplicidad y eficiencia requeridas para una aplicación de escritorio.
+

@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Blueprint - Sistema CRM Python-SQLite</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 40px; line-height: 1.6; }
+  h1 { color: #2c3e50; border-bottom: 3px solid #3498db; padding-bottom: 10px; }
+  h2 { color: #34495e; margin-top: 30px; border-left: 4px solid #3498db; padding-left: 10px; }
+  h3 { color: #2c3e50; }
+  .header { background: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 30px; }
+  .section { margin: 20px 0; }
+  .code { background: #f4f4f4; padding: 15px; border-radius: 5px; font-family: monospace; white-space: pre-wrap; }
+  table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+  th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+  th { background-color: #3498db; color: white; }
+  .requirement { background: #e8f4fc; padding: 15px; border-radius: 5px; margin: 10px 0; }
+  .phase { background: #f0f7fd; padding: 15px; border-left: 4px solid #2980b9; margin: 15px 0; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Blueprint - Sistema CRM Python-SQLite</h1>
+  <p><strong>Versión:</strong> 1.0</p>
+  <p><strong>Fecha:</strong> 15 de Marzo, 2024</p>
+  <p><strong>Autor:</strong> Departamento de TI</p>
+  <p><strong>Estado:</strong> Aprobado</p>
+</div>
+
+<div class="section">
+  <h2>1. Introducción y Objetivos</h2>
+  <p>Este documento describe la especificación técnica completa para el desarrollo de un sistema de Customer Relationship Management (CRM) desarrollado en Python con SQLite como base de datos, destinado a operar como aplicación de escritorio.</p>
+  
+  <h3>1.1 Objetivos del Proyecto</h3>
+  <ul>
+    <li>Proporcionar una solución CRM completa para gestión de clientes y ventas</li>
+    <li>Crear una aplicación de escritorio multiplataforma</li>
+    <li>Utilizar tecnologías open-source para minimizar costos</li>
+    <li>Garantizar escalabilidad y mantenibilidad del código</li>
+    <li>Implementar medidas de seguridad robustas</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>2. Arquitectura del Sistema</h2>
+  
+  <h3>2.1 Diagrama de Arquitectura</h3>
+  <p><strong>Patrón:</strong> Modelo-Vista-Controlador (MVC)</p>
+  
+  <h3>2.2 Estructura de Directorios</h3>
+  <div class="code">
+CRM_System/
+│
+├── main.py                 # Punto de entrada principal
+├── requirements.txt        # Dependencias del proyecto
+├── README.md              # Documentación del proyecto
+│
+├── database/
+│   ├── __init__.py
+│   ├── schema.sql         # Esquema de base de datos
+│   └── crm_database.db    # Base de datos (se crea automáticamente)
+│
+├── models/                # Modelos de datos
+│   ├── __init__.py
+│   ├── base_model.py     # Clase base para modelos
+│   ├── contact.py        # Modelo de contacto
+│   ├── opportunity.py    # Modelo de oportunidad
+│   ├── activity.py       # Modelo de actividad
+│   ├── user.py           # Modelo de usuario
+│   └── tag.py            # Modelo de etiqueta
+│
+├── views/                 # Interfaces de usuario
+│   ├── __init__.py
+│   ├── main_window.py    # Ventana principal
+│   ├── login_dialog.py   # Diálogo de login
+│   ├── contact_view.py   # Vista de contactos
+│   ├── opportunity_view.py # Vista de oportunidades
+│   ├── activity_view.py  # Vista de actividades
+│   ├── dashboard_view.py # Vista de dashboard
+│   ├── contact_dialog.py # Diálogo de contacto
+│   └── opportunity_dialog.py # Diálogo de oportunidad
+│
+├── controllers/           # Lógica de negocio
+│   ├── __init__.py
+│   ├── database_controller.py  # Controlador de BD
+│   ├── contact_controller.py   # Controlador de contactos
+│   ├── opportunity_controller.py # Controlador de oportunidades
+│   ├── activity_controller.py  # Controlador de actividades
+│   ├── auth_controller.py     # Controlador de autenticación
+│   └── report_controller.py   # Controlador de reportes
+│
+├── utils/                 # Utilidades
+│   ├── __init__.py
+│   ├── auth.py           # Utilidades de autenticación
+│   ├── validators.py     # Validadores de datos
+│   ├── helpers.py        # Funciones auxiliares
+│   ├── exporters.py      # Utilidades de exportación
+│   └── importers.py      # Utilidades de importación
+│
+├── assets/               # Recursos
+│   ├── icons/           # Iconos de la aplicación
+│   ├── styles/          # Archivos de estilo CSS
+│   └── splash.png       # Imagen de splash screen
+│
+└── reports/             # Plantillas de reportes
+    ├── contact_report.html
+    ├── opportunity_report.html
+    └── dashboard_template.html
+  </div>
+</div>
+
+<div class="section">
+  <h2>3. Especificación de Base de Datos</h2>
+  
+  <h3>3.1 Esquema de Base de Datos</h3>
+  <div class="code">
+-- Tabla de Usuarios
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    email TEXT NOT NULL,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    role TEXT DEFAULT 'user',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    last_login DATETIME,
+    is_active BOOLEAN DEFAULT TRUE
+);
+
+-- Tabla de Contactos (estructura simplificada)
+CREATE TABLE contacts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    company TEXT,
+    job_title TEXT,
+    email TEXT,
+    phone TEXT,
+    status TEXT DEFAULT 'lead',
+    assigned_to INTEGER,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (assigned_to) REFERENCES users (id)
+);
+
+-- Tabla de Oportunidades
+CREATE TABLE opportunities (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    contact_id INTEGER NOT NULL,
+    value REAL NOT NULL,
+    stage TEXT NOT NULL DEFAULT 'prospecting',
+    probability INTEGER DEFAULT 10,
+    close_date DATE,
+    assigned_to INTEGER,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (contact_id) REFERENCES contacts (id),
+    FOREIGN KEY (assigned_to) REFERENCES users (id)
+);
+  </div>
+  
+  <h3>3.2 Relaciones entre Tablas</h3>
+  <table>
+    <tr>
+      <th>Tabla</th>
+      <th>Relación</th>
+      <th>Tabla Relacionada</th>
+      <th>Tipo</th>
+    </tr>
+    <tr>
+      <td>contacts</td>
+      <td>assigned_to</td>
+      <td>users</td>
+      <td>Muchos a Uno</td>
+    </tr>
+    <tr>
+      <td>opportunities</td>
+      <td>contact_id</td>
+      <td>contacts</td>
+      <td>Muchos a Uno</td>
+    </tr>
+    <tr>
+      <td>opportunities</td>
+      <td>assigned_to</td>
+      <td>users</td>
+      <td>Muchos a Uno</td>
+    </tr>
+    <tr>
+      <td>activities</td>
+      <td>assigned_to</td>
+      <td>users</td>
+      <td>Muchos a Uno</td>
+    </tr>
+  </table>
+</div>
+
+<div class="section">
+  <h2>4. Requisitos Técnicos</h2>
+  
+  <div class="requirement">
+    <h3>4.1 Stack Tecnológico</h3>
+    <ul>
+      <li><strong>Lenguaje:</strong> Python 3.8+</li>
+      <li><strong>Base de Datos:</strong> SQLite 3</li>
+      <li><strong>GUI Framework:</strong> PyQt5</li>
+      <li><strong>ORM:</strong> SQLAlchemy (opcional)</li>
+      <li><strong>Reporting:</strong> Pandas + Matplotlib</li>
+    </ul>
+  </div>
+  
+  <div class="requirement">
+    <h3>4.2 Dependencias Principales</h3>
+    <div class="code">
+PyQt5==5.15.9
+SQLAlchemy==2.0.23
+pandas==2.0.3
+numpy==1.24.3
+matplotlib==3.7.2
+python-dateutil==2.8.2
+email-validator==2.0.0
+pyinstaller==5.13.0
+    </div>
+  </div>
+  
+  <div class="requirement">
+    <h3>4.3 Requisitos del Sistema</h3>
+    <ul>
+      <li><strong>Sistema Operativo:</strong> Windows 10+, macOS 10.14+, Linux Ubuntu 18.04+</li>
+      <li><strong>RAM:</strong> 4 GB mínimo (8 GB recomendado)</li>
+      <li><strong>Almacenamiento:</strong> 500 MB de espacio libre</li>
+      <li><strong>Python:</strong> Versión 3.8 o superior instalada</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section">
+  <h2>5. Funcionalidades Principales</h2>
+  
+  <h3>5.1 Módulo de Gestión de Contactos</h3>
+  <table>
+    <tr>
+      <th>Función</th>
+      <th>Descripción</th>
+      <th>Prioridad</th>
+    </tr>
+    <tr>
+      <td>Crear/Editar Contactos</td>
+      <td>Gestión completa de información de contactos</td>
+      <td>Alta</td>
+    </tr>
+    <tr>
+      <td>Búsqueda Avanzada</td>
+      <td>Búsqueda por múltiples criterios y filtros</td>
+      <td>Alta</td>
+    </tr>
+    <tr>
+      <td>Importación/Exportación</td>
+      <td>CSV, Excel formatos soportados</td>
+      <td>Media</td>
+    </tr>
+    <tr>
+      <td>Segmentación</td>
+      <td>Etiquetas y categorización de contactos</td>
+      <td>Media</td>
+    </tr>
+  </table>
+  
+  <h3>5.2 Módulo de Gestión de Ventas</h3>
+  <table>
+    <tr>
+      <th>Función</th>
+      <th>Descripción</th>
+      <th>Prioridad</th>
+    </tr>
+    <tr>
+      <td>Pipeline Visual</td>
+      <td>Vista gráfica de etapas de venta</td>
+      <td>Alta</td>
+    </tr>
+    <tr>
+      <td>Gestión de Oportunidades</td>
+      <td>Seguimiento de oportunidades de venta</td>
+      <td>Alta</td>
+    </tr>
+    <tr>
+      <td>Forecast de Ingresos</td>
+      <td>Proyecciones basadas en probabilidades</td>
+      <td>Media</td>
+    </tr>
+    <tr>
+      <td>Automatización</td>
+      <td>Flujos de trabajo automatizados</td>
+      <td>Baja</td>
+    </tr>
+  </table>
+</div>
+
+<div class="section">
+  <h2>6. Plan de Implementación</h2>
+  
+  <div class="phase">
+    <h3>Fase 1: Core del Sistema (Semanas 1-3)</h3>
+    <ul>
+      <li>Estructura del proyecto y configuración inicial</li>
+      <li>Sistema de base de datos y modelos básicos</li>
+      <li>Autenticación y gestión de usuarios</li>
+      <li>Interfaz principal básica</li>
+      <li><strong>Entregable:</strong> Sistema base funcionando con login</li>
+    </ul>
+  </div>
+  
+  <div class="phase">
+    <h3>Fase 2: Gestión de Contactos (Semanas 4-5)</h3>
+    <ul>
+      <li>CRUD completo de contactos</li>
+      <li>Búsqueda y filtrado</li>
+      <li>Sistema de etiquetas</li>
+      <li>Importación/exportación de datos</li>
+      <li><strong>Entregable:</strong> Módulo de contactos completamente funcional</li>
+    </ul>
+  </div>
+  
+  <div class="phase">
+    <h3>Fase 3: Pipeline de Ventas (Semanas 6-7)</h3>
+    <ul>
+      <li>Gestión de oportunidades</li>
+      <li>Pipeline visual</li>
+      <li>Forecast de ventas</li>
+      <li>Reportes básicos</li>
+      <li><strong>Entregable:</strong> Módulo de ventas operativo</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section">
+  <h2>7. Consideraciones de Seguridad</h2>
+  
+  <h3>7.1 Medidas de Seguridad Implementadas</h3>
+  <ul>
+    <li>Autenticación con hash de contraseñas (SHA-256 con salt)</li>
+    <li>Validación de entrada de datos para prevenir inyecciones SQL</li>
+    <li>Control de acceso basado en roles de usuario</li>
+    <li>Encriptación de datos sensibles en la base de datos</li>
+    <li>Backups automáticos de la base de datos</li>
+  </ul>
+  
+  <h3>7.2 Roles de Usuario</h3>
+  <table>
+    <tr>
+      <th>Rol</th>
+      <th>Permisos</th>
+      <th>Descripción</th>
+    </tr>
+    <tr>
+      <td>Administrador</td>
+      <td>Acceso completo al sistema</td>
+      <td>Gestión de usuarios, configuración del sistema</td>
+    </tr>
+    <tr>
+      <td>Gerente</td>
+      <td>Gestión de equipo y reportes</td>
+      <td>Ver todos los contactos y oportunidades del equipo</td>
+    </tr>
+    <tr>
+      <td>Usuario</td>
+      <td>Gestión de sus contactos y oportunidades</td>
+      <td>Acceso limitado a sus propios datos</td>
+    </tr>
+  </table>
+</div>
+
+<div class="section">
+  <h2>8. Estrategia de Testing</h2>
+  
+  <h3>8.1 Tipos de Testing</h3>
+  <ul>
+    <li><strong>Unit Testing:</strong> Tests individuales para cada función y método</li>
+    <li><strong>Integration Testing:</strong> Tests de flujos completos entre módulos</li>
+    <li><strong>UI Testing:</strong> Tests de interfaz de usuario con pytest-qt</li>
+    <li><strong>Performance Testing:</strong> Tests de carga con datasets grandes</li>
+  </ul>
+  
+  <h3>8.2 Cobertura de Testing Objetivo</h3>
+  <table>
+    <tr>
+      <th>Módulo</th>
+      <th>Cobertura Objetivo</th>
+      <th>Prioridad</th>
+    </tr>
+    <tr>
+      <td>Autenticación</td>
+      <td>100%</td>
+      <td>Crítica</td>
+    </tr>
+    <tr>
+      <td>Gestión de Contactos</td>
+      <td>90%</td>
+      <td>Alta</td>
+    </tr>
+    <tr>
+      <td>Gestión de Ventas</td>
+      <td>85%</td>
+      <td>Alta</td>
+    </tr>
+    <tr>
+      <td>Reportes</td>
+      <td>75%</td>
+      <td>Media</td>
+    </tr>
+  </table>
+</div>
+
+<div class="section">
+  <h2>9. Plan de Despliegue</h2>
+  
+  <h3>9.1 Empaquetado y Distribución</h3>
+  <ul>
+    <li>Uso de PyInstaller para crear ejecutables</li>
+    <li>Versiones para Windows (.exe), macOS (.app) y Linux (binario)</li>
+    <li>Scripts de instalación automatizados</li>
+    <li>Documentación de instalación incluida</li>
+  </ul>
+  
+  <h3>9.2 Requisitos de Despliegue</h3>
+  <div class="code">
+# Comando para crear ejecutable
+pyinstaller --name="SistemaCRM" --windowed --icon=assets/icon.ico main.py
+
+# Estructura del paquete de distribución
+SistemaCRM/
+├── SistemaCRM.exe (o .app o binario)
+├── database/
+├── assets/
+├── reports/
+└── manual_de_usuario.pdf
+  </div>
+</div>
+
+<div class="section">
+  <h2>10. Mantenimiento y Soporte</h2>
+  
+  <h3>10.1 Plan de Mantenimiento</h3>
+  <ul>
+    <li>Actualizaciones de seguridad trimestrales</li>
+    <li>Actualizaciones de funcionalidad semestrales</li>
+    <li>Soporte técnico para usuarios</li>
+    <li>Documentación de troubleshooting</li>
+  </ul>
+  
+  <h3>10.2 Backup y Recuperación</h3>
+  <ul>
+    <li>Backups automáticos diarios de la base de datos</li>
+    <li>Herramientas de exportación de datos</li>
+    <li>Procedimientos de recuperación documentados</li>
+    <li>Scripts de migración de datos</li>
+  </ul>
+</div>
+
+<div class="section">
+  <h2>Anexos</h2>
+  
+  <h3>A. Glosario de Términos</h3>
+  <ul>
+    <li><strong>Lead:</strong> Contacto potencial no calificado</li>
+    <li><strong>Prospect:</strong> Contacto calificado con potencial de venta</li>
+    <li><strong>Oportunidad:</strong> Ventana potencial de venta con valor estimado</li>
+    <li><strong>Pipeline:</strong> Flujo visual de etapas de venta</li>
+  </ul>
+  
+  <h3>B. Referencias Técnicas</h3>
+  <ul>
+    <li>Documentación oficial de Python</li>
+    <li>Documentación de PyQt5</li>
+    <li>SQLite documentation</li>
+    <li>Estándares de seguridad OWASP</li>
+  </ul>
+</div>
+
+</body>
+</html>
