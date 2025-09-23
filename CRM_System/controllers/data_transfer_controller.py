@@ -18,30 +18,30 @@ class DataTransferController:
             "contacts": {
                 "model": Contact,
                 "get_all_method": self.controllers["contact"].get_all_contacts,
-                "create_method": self.controllers["contact"].create_contact_from_dict,
+                "create_method": self.controllers["contact"].create_contact,
                 "clear_method": self.controllers["contact"].clear_contacts, # Need to implement this
-                "update_method": self.controllers["contact"].update_contact_from_dict # Need to implement this
+                "update_method": self.controllers["contact"].update_contact # Need to implement this
             },
             "opportunities": {
                 "model": Opportunity,
                 "get_all_method": self.controllers["opportunity"].get_all_opportunities,
-                "create_method": self.controllers["opportunity"].create_opportunity_from_dict, # Need to implement this
+                "create_method": self.controllers["opportunity"].create_opportunity, # Need to implement this
                 "clear_method": self.controllers["opportunity"].clear_opportunities, # Need to implement this
-                "update_method": self.controllers["opportunity"].update_opportunity_from_dict # Need to implement this
+                "update_method": self.controllers["opportunity"].update_opportunity # Need to implement this
             },
             "activities": {
                 "model": Activity,
                 "get_all_method": self.controllers["activity"].get_all_activities,
-                "create_method": self.controllers["activity"].create_activity_from_dict, # Need to implement this
+                "create_method": self.controllers["activity"].create_activity, # Need to implement this
                 "clear_method": self.controllers["activity"].clear_activities, # Need to implement this
-                "update_method": self.controllers["activity"].update_activity_from_dict # Need to implement this
+                "update_method": self.controllers["activity"].update_activity # Need to implement this
             },
             "tags": {
                 "model": Tag,
                 "get_all_method": self.controllers["tag"].get_all_tags,
-                "create_method": self.controllers["tag"].create_tag_from_dict, # Need to implement this
+                "create_method": self.controllers["tag"].create_tag, # Need to implement this
                 "clear_method": self.controllers["tag"].clear_tags, # Need to implement this
-                "update_method": self.controllers["tag"].update_tag_from_dict # Need to implement this
+                "update_method": self.controllers["tag"].update_tag # Need to implement this
             }
         }
 

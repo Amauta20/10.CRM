@@ -5,16 +5,18 @@ class TagController:
     def __init__(self):
         self.db_controller = DatabaseController()
 
-    def create_tag(self, tag_name, color='#007bff'):
+    def create_tag(self, tag_data):
         try:
             query = "INSERT INTO tags (name, color) VALUES (?, ?)"
-            params = (tag_name, color)
+            params = (tag_data.get('name', ''), tag_data.get('color', '#007bff'))
             self.db_controller.execute_query(query, params)
         except Exception as e:
             if "UNIQUE constraint failed" in str(e):
                 raise ValueError("La etiqueta ya existe.")
             else:
                 raise e
+
+    
 
     def get_all_tags(self):
         query = "SELECT * FROM tags"
@@ -37,55 +39,9 @@ class TagController:
             return tag
         return None
 
-    def update_tag(self, tag_id, name, color):
+    def update_tag(self, tag_id, tag_data):
         query = "UPDATE tags SET name = ?, color = ? WHERE id = ?"
-        params = (name, color, tag_id)
-        self.db_controller.execute_query(query, params)
-
-    def create_tag_from_dict(self, tag_data):
-        name = tag_data.get('name', '')
-        color = tag_data.get('color', '#007bff')
-        try:
-            query = "INSERT INTO tags (name, color) VALUES (?, ?)"
-            params = (name, color)
-            self.db_controller.execute_query(query, params)
-        except Exception as e:
-            if "UNIQUE constraint failed" in str(e):
-                raise ValueError("La etiqueta ya existe.")
-            else:
-                raise e
-
-    def get_all_tags(self):
-        query = "SELECT * FROM tags"
-        results = self.db_controller.execute_query(query)
-        tags = []
-        for row in results:
-            tag = Tag(name=row[1], color=row[2])
-            tag.id = row[0]
-            tags.append(tag)
-        return tags
-
-    def get_tag_by_id(self, tag_id):
-        query = "SELECT * FROM tags WHERE id = ?"
-        params = (tag_id,)
-        results = self.db_controller.execute_query(query, params)
-        if results:
-            result = results[0]
-            tag = Tag(name=result[1], color=result[2])
-            tag.id = result[0]
-            return tag
-        return None
-
-    def update_tag(self, tag_id, name, color):
-        query = "UPDATE tags SET name = ?, color = ? WHERE id = ?"
-        params = (name, color, tag_id)
-        self.db_controller.execute_query(query, params)
-
-    def update_tag_from_dict(self, tag_id, tag_data):
-        name = tag_data.get('name', '')
-        color = tag_data.get('color', '#007bff')
-        query = "UPDATE tags SET name = ?, color = ? WHERE id = ?"
-        params = (name, color, tag_id)
+        params = (tag_data.get('name', ''), tag_data.get('color', '#007bff'), tag_id)
         self.db_controller.execute_query(query, params)
 
     def clear_tags(self):

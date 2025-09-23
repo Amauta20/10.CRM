@@ -122,12 +122,12 @@ class ContactDialog(tk.Toplevel):
             "first_name": first_name,
             "last_name": last_name,
             "company": company,
-            "company_level": company_level,
             "job_title": job_title,
-            "referred_by": referred_by,
             "email": email,
             "phone": phone,
-            "status": status
+            "status": status,
+            "company_level": company_level,
+            "referred_by": referred_by
         }
 
         if self.contact:

@@ -26,7 +26,7 @@ class TagDialog(tk.Toplevel):
 
         if self.tag:
             self.title(self.i18n.get("tag_dialog", "edit_title"))
-            self.selected_color = translate_color(self.tag.get('color', '#FFFFFF'))
+            self.selected_color = translate_color(self.tag.color if self.tag.color else '#FFFFFF')
         else:
             self.title(self.i18n.get("tag_dialog", "new_title"))
 
@@ -60,7 +60,7 @@ class TagDialog(tk.Toplevel):
 
     def load_tag_data(self):
         if self.tag:
-            self.name_entry.insert(0, self.tag.get('name', ''))
+            self.name_entry.insert(0, self.tag.name if self.tag.name else '')
 
     def save_tag(self):
         name = self.name_entry.get()
@@ -71,10 +71,14 @@ class TagDialog(tk.Toplevel):
             return
 
         try:
+            tag_data = {
+                "name": name,
+                "color": color
+            }
             if self.tag:
-                self.tag_controller.update_tag(self.tag['id'], name, color)
+                self.tag_controller.update_tag(self.tag.id, tag_data)
             else:
-                self.tag_controller.create_tag(name, color)
+                self.tag_controller.create_tag(tag_data)
             
             self.parent.load_tags()
             self.destroy()

@@ -7,35 +7,19 @@ class ActivityController:
 
     def create_activity(self, activity_data):
         query = """
-            INSERT INTO activities (type, subject, due_date, completed, priority)
-            VALUES (?, ?, ?, ?, ?)
-        """
-        params = (
-            activity_data["type"],
-            activity_data["subject"],
-            activity_data["due_date"],
-            activity_data["completed"],
-            activity_data["priority"]
-        )
-        self.db_controller.execute_query(query, params)
-
-    def create_activity_from_dict(self, activity_data):
-        activity_type = activity_data.get('type', '')
-        subject = activity_data.get('subject', '')
-        description = activity_data.get('description', '')
-        related_to = activity_data.get('related_to')
-        related_type = activity_data.get('related_type', '')
-        due_date = activity_data.get('due_date')
-        completed = activity_data.get('completed', False)
-        completed_date = activity_data.get('completed_date')
-        priority = activity_data.get('priority', 'media')
-
-        query = """
             INSERT INTO activities (type, subject, description, related_to, related_type, due_date, completed, completed_date, priority)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """
         params = (
-            activity_type, subject, description, related_to, related_type, due_date, completed, completed_date, priority
+            activity_data.get('type', ''),
+            activity_data.get('subject', ''),
+            activity_data.get('description', ''),
+            activity_data.get('related_to'),
+            activity_data.get('related_type', ''),
+            activity_data.get('due_date'),
+            activity_data.get('completed', False),
+            activity_data.get('completed_date'),
+            activity_data.get('priority', 'media')
         )
         self.db_controller.execute_query(query, params)
 
@@ -66,40 +50,22 @@ class ActivityController:
             }
         return None
 
-    def update_activity(self, activity_id, new_data):
-        query = """
-            UPDATE activities
-            SET type = ?, subject = ?, due_date = ?, completed = ?, priority = ?
-            WHERE id = ?
-        """
-        params = (
-            new_data['type'],
-            new_data['subject'],
-            new_data['due_date'],
-            new_data['completed'],
-            new_data['priority'],
-            activity_id
-        )
-        self.db_controller.execute_query(query, params)
-
-    def update_activity_from_dict(self, activity_id, activity_data):
-        activity_type = activity_data.get('type', '')
-        subject = activity_data.get('subject', '')
-        description = activity_data.get('description', '')
-        related_to = activity_data.get('related_to')
-        related_type = activity_data.get('related_type', '')
-        due_date = activity_data.get('due_date')
-        completed = activity_data.get('completed', False)
-        completed_date = activity_data.get('completed_date')
-        priority = activity_data.get('priority', 'media')
-
+    def update_activity(self, activity_id, activity_data):
         query = """
             UPDATE activities
             SET type = ?, subject = ?, description = ?, related_to = ?, related_type = ?, due_date = ?, completed = ?, completed_date = ?, priority = ?
             WHERE id = ?
         """
         params = (
-            activity_type, subject, description, related_to, related_type, due_date, completed, completed_date, priority,
+            activity_data.get('type', ''),
+            activity_data.get('subject', ''),
+            activity_data.get('description', ''),
+            activity_data.get('related_to'),
+            activity_data.get('related_type', ''),
+            activity_data.get('due_date'),
+            activity_data.get('completed', False),
+            activity_data.get('completed_date'),
+            activity_data.get('priority', 'media'),
             activity_id
         )
         self.db_controller.execute_query(query, params)

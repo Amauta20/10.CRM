@@ -1,102 +1,142 @@
-# Sistema CRM Desktop - Python & SQLite
+<div align="center">
+  <h1 align="center">CRM System Pro</h1>
+  <p align="center">
+    Una solución de software de escritorio potente e intuitiva para la Gestión de Relaciones con Clientes (CRM).
+    <br />
+    <a href="#características-principales"><strong>Explorar Características »</strong></a>
+    <br />
+    <br />
+    <!-- Aquí puedes añadir enlaces a screenshots o a una página del proyecto -->
+    <!-- <a href="#">Ver Demo</a> · -->
+    <!-- <a href="#">Reportar Bug</a> · -->
+    <!-- <a href="#">Solicitar Característica</a> -->
+  </p>
+</div>
 
-Un sistema de Customer Relationship Management (CRM) desarrollado en Python para escritorio, utilizando SQLite como base de datos.
+<!-- BADGES DE ESTADO (EJEMPLOS) -->
+<!-- Reemplaza los enlaces con los tuyos propios cuando los tengas -->
+<div align="center">
+  <img src="https://img.shields.io/badge/Python-3.8+-blue.svg" alt="Python Version">
+  <img src="https://img.shields.io/badge/Framework-PyQt5-green.svg" alt="Framework">
+  <img src="https://img.shields.io/badge/Database-SQLite-purple.svg" alt="Database">
+  <img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License">
+</div>
 
-## ✨ Características Principales
+---
 
-- **Gestión completa de contactos** con campos personalizables
-- **Pipeline visual de ventas** con etapas personalizables
-- **Sistema de actividades y recordatorios**
-- **Dashboard con métricas y reportes**
-- **Búsqueda avanzada y filtrado**
-- **Sistema de etiquetas y categorización**
-- **Interfaz intuitiva y responsive**
-- **Base de datos SQLite local y portable**
+## Acerca del Proyecto
 
-## 🛠️ Tecnologías Utilizadas
+**CRM System Pro** es una aplicación de escritorio diseñada para ayudar a profesionales y pequeñas empresas a gestionar sus interacciones con clientes y prospectos de manera eficiente. Centralice su información, optimice su embudo de ventas y nunca pierda una oportunidad de negocio.
 
-- Python 3.8+
-- SQLite3
-- Tkinter para la interfaz gráfica
+Construido con una arquitectura robusta y una interfaz de usuario limpia, este CRM es la herramienta perfecta para organizar sus datos y potenciar su crecimiento.
 
-## 🚀 Distribución y Ejecución
+### ¿Por Qué Elegir CRM System Pro?
 
-### Opción 1: Ejecutable Standalone (Recomendado para usuarios finales)
+> Esta no es solo otra libreta de contactos. Es un sistema completo diseñado para la acción. Desde el seguimiento de oportunidades valiosas en un pipeline visual hasta la gestión detallada de actividades, cada función está pensada para mejorar su productividad y resultados comerciales.
 
-Para la forma más sencilla de usar la aplicación sin necesidad de instalar Python o dependencias:
+---
 
-1.  **Descarga el ejecutable:** Obtén la última versión del ejecutable desde [enlace de descarga aquí - por ejemplo, tu página de lanzamientos de GitHub].
-2.  **Ejecuta la aplicación:** Simplemente haz doble clic en el archivo `.exe` descargado.
+## Características Principales
 
-**Cómo crear el ejecutable (para desarrolladores):**
+Este sistema viene cargado con funcionalidades diseñadas para el profesional moderno:
 
-Utilizamos `PyInstaller` para empaquetar la aplicación.
+*   **📊 Dashboard Centralizado:**
+    *   Obtenga una vista panorámica de sus actividades recientes, oportunidades clave y tareas pendientes en un solo lugar.
 
-1.  **Instala PyInstaller:**
-    ```bash
-    pip install pyinstaller
-    ```
-2.  **Navega al directorio raíz del proyecto:**
-    ```bash
-    cd C:\Python\10.CRM
-    ```
-3.  **Crea el ejecutable:**
-    ```bash
-    pyinstaller --onefile --windowed run.py
-    ```
-    El ejecutable se encontrará en la carpeta `dist/`.
+*   **📇 Gestión Avanzada de Contactos:**
+    *   Cree perfiles de contacto detallados, incluyendo información personal, empresarial y notas personalizadas.
+    *   Segmente y organice sus contactos con un sistema de **etiquetado flexible** y personalizable por colores.
 
-### Opción 2: Ejecutar desde el Código Fuente (Para desarrolladores)
+*   **📈 Pipeline de Ventas Visual:**
+    *   Visualice y gestione sus oportunidades de negocio a través de distintas etapas (Prospección, Calificación, Cierre, etc.).
+    *   Arrastre y suelte oportunidades entre etapas para una actualización rápida y sencilla.
 
-Si deseas ejecutar la aplicación desde el código fuente o contribuir al desarrollo:
+*   **📅 Seguimiento de Actividades y Tareas:**
+    *   Programe y monitoree llamadas, reuniones, correos electrónicos y tareas.
+    *   Asocie actividades directamente con contactos u oportunidades para mantener un historial claro de interacciones.
 
-1.  **Verifica la instalación de Python:**
-    Abre una terminal (Símbolo del sistema o PowerShell en Windows) y escribe:
-    ```bash
-    python --version
-    ```
-    Si Python no está instalado o la versión es inferior a 3.8, necesitarás instalarlo.
+*   **🔍 Búsqueda Potente:**
+    *   Encuentre rápidamente la información que necesita con una funcionalidad de búsqueda global en toda la base de datos.
 
-2.  **Instala Python (si es necesario):**
-    Descarga la última versión estable de Python para Windows desde el sitio web oficial: [https://www.python.org/downloads/windows/](https://www.python.org/downloads/windows/)
-    Durante la instalación, asegúrate de marcar la opción "Add Python to PATH" (Añadir Python al PATH) para que Python sea accesible desde la terminal.
+*   **🎨 Personalización de la Interfaz:**
+    *   Adapte la apariencia de la aplicación a su gusto con diferentes **temas visuales**.
 
-3.  **Clona o descarga el proyecto:**
-    ```bash
-    git clone https://github.com/tu-usuario/tu-repositorio.git
-    cd tu-repositorio
-    ```
-    (Ajusta el enlace del repositorio según corresponda)
+*   **🔄 Importación y Exportación de Datos:**
+    *   Migre sus datos existentes fácilmente mediante la importación desde archivos (CSV, Excel) y exporte sus registros para análisis o respaldo.
 
-4.  **Instala las dependencias:**
-    Navega al directorio raíz del proyecto en tu terminal y ejecuta:
-    ```bash
-    pip install -r CRM_System/requirements.txt
-    ```
+---
 
-5.  **Ejecuta la aplicación:**
-    ```bash
-    python run.py
-    ```
-    O si `run.py` no existe o es un lanzador:
-    ```bash
-    python CRM_System/main.py
-    ```
+## Pila Tecnológica
 
-## 📦 Estructura del Proyecto
+*   **Lenguaje de Programación:** Python
+*   **Framework de GUI:** PyQt5
+*   **Base de Datos:** SQLite
+*   **ORM:** SQLAlchemy
+*   **Librerías Adicionales:** Pandas, Matplotlib
 
-(Mantener la estructura existente o añadir una sección si es necesario)
+---
 
-## 📝 Versionado
+## Guía de Instalación y Uso
 
-Utilizamos [Git](https://git-scm.com/) para el control de versiones. Cada lanzamiento importante se etiquetará con un número de versión (ej. `v1.0.0`).
+Siga estos pasos para poner en marcha la aplicación en su sistema local.
 
-Para ver la versión actual de la aplicación, consulta el archivo `CRM_System/main.py` o un archivo `version.py` dedicado (si se implementa).
+### 1. Prerrequisitos
 
-## 🤝 Contribución
+Asegúrese de tener instalado **Python 3.8 o superior**. Puede descargarlo desde [python.org](https://www.python.org/).
 
-¡Las contribuciones son bienvenidas! Por favor, lee `CONTRIBUTING.md` (si existe) para más detalles.
+### 2. Proceso de Instalación
 
-## 📄 Licencia
+<details>
+  <summary><strong>Paso a Paso: Clonar e Instalar Dependencias</strong></summary>
 
-Este proyecto está bajo la Licencia [Nombre de la Licencia] - mira el archivo `LICENSE` para más detalles.
+  1.  **Clone el repositorio en su máquina local:**
+      ```sh
+      git clone <URL-DEL-REPOSITORIO-GIT>
+      cd <NOMBRE-DEL-DIRECTORIO-DEL-PROYECTO>
+      ```
+
+  2.  **Cree y active un entorno virtual (altamente recomendado):**
+      Esto mantiene las dependencias del proyecto aisladas.
+      ```sh
+      # En Windows
+      python -m venv venv
+      .\venv\Scripts\activate
+
+      # En macOS & Linux
+      python3 -m venv venv
+      source venv/bin/activate
+      ```
+
+  3.  **Instale todas las librerías necesarias:**
+      Nuestro proyecto gestiona las dependencias a través de `pip`.
+      ```sh
+      pip install -r CRM_System/requirements.txt
+      ```
+</details>
+
+### 3. Primer Uso
+
+<details>
+  <summary><strong>Iniciar la Aplicación</strong></summary>
+
+  *   **Base de Datos Automática:** No necesita configurar nada. La primera vez que ejecute la aplicación, se creará automáticamente un archivo de base de datos SQLite (`crm_database.db`) en el directorio raíz.
+
+  *   **Ejecute la aplicación:**
+      Una vez completada la instalación, inicie el programa con el siguiente comando:
+      ```sh
+      python run.py
+      ```
+  ¡Y listo! La ventana principal de **CRM System Pro** se abrirá y podrá comenzar a gestionar sus clientes.
+</details>
+
+---
+<!--
+## Galería de Screenshots
+
+Aquí puedes añadir imágenes de tu aplicación para mostrar la interfaz.
+
+<div align="center">
+  <img src="URL_A_SCREENSHOT_1" alt="Dashboard View" width="400"/>
+  <img src="URL_A_SCREENSHOT_2" alt="Contact Management" width="400"/>
+</div>
+-->

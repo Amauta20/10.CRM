@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS opportunities (
     probability INTEGER DEFAULT 10,
     close_date DATE,
     description TEXT,
+    assigned_to TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (contact_id) REFERENCES contacts (id)

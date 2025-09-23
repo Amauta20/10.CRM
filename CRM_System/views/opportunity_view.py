@@ -41,8 +41,11 @@ class OpportunityDialog(tk.Toplevel):
         self.stage_combo.grid(row=3, column=1, sticky=tk.W)
 
         ttk.Label(self.frame, text=self.i18n.get("opportunity_dialog", "probability_label")).grid(row=4, column=0, sticky=tk.W, pady=5)
-        self.probability_scale = ttk.Scale(self.frame, from_=0, to=100, orient=tk.HORIZONTAL, length=250)
+        self.probability_scale = ttk.Scale(self.frame, from_=0, to=100, orient=tk.HORIZONTAL, length=200, command=self.update_probability_label)
         self.probability_scale.grid(row=4, column=1, sticky=tk.W)
+
+        self.probability_label = ttk.Label(self.frame, text="0%")
+        self.probability_label.grid(row=4, column=2, sticky=tk.W, padx=5)
 
         button_frame = ttk.Frame(self.frame)
         button_frame.grid(row=5, column=0, columnspan=2, pady=10)
@@ -62,10 +65,14 @@ class OpportunityDialog(tk.Toplevel):
             self.value_entry.insert(0, self.opportunity.value)
             self.stage_combo.set(self.opportunity.stage)
             self.probability_scale.set(self.opportunity.probability)
+            self.update_probability_label(self.opportunity.probability)
             
             contact = self.contact_controller.get_contact(self.opportunity.contact_id)
             if contact:
                 self.contact_combo.set(f"{contact.first_name} {contact.last_name}")
+
+    def update_probability_label(self, value):
+        self.probability_label.config(text=f"{int(float(value))}")
 
     def save_opportunity(self):
         title = self.title_entry.get()

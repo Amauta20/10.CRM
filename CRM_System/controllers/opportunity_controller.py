@@ -7,34 +7,18 @@ class OpportunityController:
 
     def create_opportunity(self, opportunity_data):
         query = """
-            INSERT INTO opportunities (title, contact_id, value, stage, probability)
-            VALUES (?, ?, ?, ?, ?)
-        """
-        params = (
-            opportunity_data["title"],
-            opportunity_data["contact_id"],
-            opportunity_data["value"],
-            opportunity_data["stage"],
-            opportunity_data["probability"]
-        )
-        self.db_controller.execute_query(query, params)
-
-    def create_opportunity_from_dict(self, opportunity_data):
-        title = opportunity_data.get('title', '')
-        contact_id = opportunity_data.get('contact_id')
-        value = opportunity_data.get('value', 0.0)
-        stage = opportunity_data.get('stage', 'Prospección')
-        probability = opportunity_data.get('probability', 10)
-        close_date = opportunity_data.get('close_date')
-        description = opportunity_data.get('description', '')
-        assigned_to = opportunity_data.get('assigned_to')
-
-        query = """
             INSERT INTO opportunities (title, contact_id, value, stage, probability, close_date, description, assigned_to)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """
         params = (
-            title, contact_id, value, stage, probability, close_date, description, assigned_to
+            opportunity_data.get('title', ''),
+            opportunity_data.get('contact_id'),
+            opportunity_data.get('value', 0.0),
+            opportunity_data.get('stage', 'Prospección'),
+            opportunity_data.get('probability', 10),
+            opportunity_data.get('close_date'),
+            opportunity_data.get('description', ''),
+            opportunity_data.get('assigned_to')
         )
         self.db_controller.execute_query(query, params)
 
@@ -59,39 +43,21 @@ class OpportunityController:
             return opportunity
         return None
 
-    def update_opportunity(self, opportunity_id, new_data):
-        query = """
-            UPDATE opportunities
-            SET title = ?, contact_id = ?, value = ?, stage = ?, probability = ?
-            WHERE id = ?
-        """
-        params = (
-            new_data['title'],
-            new_data['contact_id'],
-            new_data['value'],
-            new_data['stage'],
-            new_data['probability'],
-            opportunity_id
-        )
-        self.db_controller.execute_query(query, params)
-
-    def update_opportunity_from_dict(self, opportunity_id, opportunity_data):
-        title = opportunity_data.get('title', '')
-        contact_id = opportunity_data.get('contact_id')
-        value = opportunity_data.get('value', 0.0)
-        stage = opportunity_data.get('stage', 'Prospección')
-        probability = opportunity_data.get('probability', 10)
-        close_date = opportunity_data.get('close_date')
-        description = opportunity_data.get('description', '')
-        assigned_to = opportunity_data.get('assigned_to')
-
+    def update_opportunity(self, opportunity_id, opportunity_data):
         query = """
             UPDATE opportunities
             SET title = ?, contact_id = ?, value = ?, stage = ?, probability = ?, close_date = ?, description = ?, assigned_to = ?
             WHERE id = ?
         """
         params = (
-            title, contact_id, value, stage, probability, close_date, description, assigned_to,
+            opportunity_data.get('title', ''),
+            opportunity_data.get('contact_id'),
+            opportunity_data.get('value', 0.0),
+            opportunity_data.get('stage', 'Prospección'),
+            opportunity_data.get('probability', 10),
+            opportunity_data.get('close_date'),
+            opportunity_data.get('description', ''),
+            opportunity_data.get('assigned_to'),
             opportunity_id
         )
         self.db_controller.execute_query(query, params)
