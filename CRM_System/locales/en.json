@@ -78,7 +78,8 @@
         "save_button": "Save",
         "cancel_button": "Cancel",
         "error_message": "All fields are required.",
-        "value_error_message": "Value must be a number."
+        "value_error_message": "Value must be a number.",
+        "contact_not_found_error": "Contact not found. Please select a valid contact from the list."
     },
     "activity_dialog": {
         "new_title": "New Activity",

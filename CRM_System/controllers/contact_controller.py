@@ -81,3 +81,16 @@ class ContactController:
         query = "DELETE FROM contacts WHERE id = ?"
         params = (contact_id,)
         self.db_controller.execute_query(query, params)
+
+    def search_contacts_by_name(self, name_prefix):
+        query = """
+            SELECT id, first_name, last_name FROM contacts
+            WHERE first_name LIKE ? OR last_name LIKE ? OR (first_name || ' ' || last_name) LIKE ?
+            LIMIT 10
+        """
+        params = (f"{name_prefix}%", f"{name_prefix}%", f"{name_prefix}%")
+        results = self.db_controller.execute_query(query, params)
+        
+        if results:
+            return [(row[0], f"{row[1]} {row[2]}") for row in results]
+        return []

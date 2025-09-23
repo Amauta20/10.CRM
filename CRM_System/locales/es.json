@@ -83,7 +83,8 @@
         "save_button": "Guardar",
         "cancel_button": "Cancelar",
         "error_message": "Todos los campos son obligatorios.",
-        "value_error_message": "El valor debe ser un número."
+        "value_error_message": "El valor debe ser un número.",
+        "contact_not_found_error": "Contacto no encontrado. Por favor, seleccione un contacto válido de la lista."
     },
     "activity_dialog": {
         "new_title": "Nueva Actividad",

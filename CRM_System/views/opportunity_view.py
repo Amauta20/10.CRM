@@ -30,7 +30,7 @@ class OpportunityDialog(tk.Toplevel):
         ttk.Label(self.frame, text=self.i18n.get("opportunity_dialog", "contact_label")).grid(row=1, column=0, sticky=tk.W, pady=5)
         self.contact_combo = ttk.Combobox(self.frame, width=38)
         self.contact_combo.grid(row=1, column=1, sticky=tk.W)
-        self.load_contacts()
+        self.contact_combo.bind('<KeyRelease>', self.on_contact_key_release)
 
         ttk.Label(self.frame, text=self.i18n.get("opportunity_dialog", "value_label")).grid(row=2, column=0, sticky=tk.W, pady=5)
         self.value_entry = ttk.Entry(self.frame, width=40)
@@ -53,11 +53,19 @@ class OpportunityDialog(tk.Toplevel):
         ttk.Button(button_frame, text=self.i18n.get("opportunity_dialog", "save_button"), command=self.save_opportunity).pack(side=tk.LEFT, padx=5)
         ttk.Button(button_frame, text=self.i18n.get("opportunity_dialog", "cancel_button"), command=self.destroy).pack(side=tk.LEFT, padx=5)
 
-    def load_contacts(self):
-        contacts = self.contact_controller.get_all_contacts()
-        if contacts:
-            self.contact_combo['values'] = [f"{c.first_name} {c.last_name}" for c in contacts]
-            self.contacts_map = {f"{c.first_name} {c.last_name}": c.id for c in contacts}
+    def on_contact_key_release(self, event):
+        search_term = self.contact_combo.get()
+        if len(search_term) > 0:
+            contacts = self.contact_controller.search_contacts_by_name(search_term)
+            if contacts:
+                contact_names = [name for id, name in contacts]
+                self.contact_combo['values'] = contact_names
+                self.contacts_map = {name: id for id, name in contacts}
+                # self.contact_combo.event_generate('<Down>') # This can be annoying
+            else:
+                self.contact_combo['values'] = []
+        else:
+            self.contact_combo['values'] = []
 
     def load_opportunity_data(self):
         if self.opportunity:
@@ -69,7 +77,10 @@ class OpportunityDialog(tk.Toplevel):
             
             contact = self.contact_controller.get_contact(self.opportunity.contact_id)
             if contact:
-                self.contact_combo.set(f"{contact.first_name} {contact.last_name}")
+                contact_full_name = f"{contact.first_name} {contact.last_name}"
+                self.contact_combo.set(contact_full_name)
+                # We need to ensure the initial contact is in the map for saving without changes
+                self.contacts_map[contact_full_name] = contact.id
 
     def update_probability_label(self, value):
         self.probability_label.config(text=f"{int(float(value))}")
@@ -92,6 +103,10 @@ class OpportunityDialog(tk.Toplevel):
             return
 
         contact_id = self.contacts_map.get(contact_name)
+
+        if not contact_id:
+            messagebox.showerror(self.i18n.get("messagebox", "error"), self.i18n.get("opportunity_dialog", "contact_not_found_error"))
+            return
 
         opportunity_data = {
             "title": title,
