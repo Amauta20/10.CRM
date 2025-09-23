@@ -2,10 +2,11 @@ import tkinter as tk
 from tkinter import ttk
 
 class PipelineView(ttk.Frame):
-    def __init__(self, parent, opportunity_controller, i18n):
+    def __init__(self, parent, opportunity_controller, i18n, user):
         super().__init__(parent)
         self.opportunity_controller = opportunity_controller
         self.i18n = i18n
+        self.current_user = user
         self.pack(fill=tk.BOTH, expand=True)
 
         self.canvas = tk.Canvas(self, bg="white")

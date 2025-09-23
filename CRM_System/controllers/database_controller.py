@@ -90,29 +90,30 @@ class DatabaseController:
     def _format_contact_results(self, results):
         contacts = []
         for row in results:
+            # Adjust indices due to new user_id column at index 1
             contact = Contact(
-                first_name=row[1],
-                last_name=row[2],
-                company=row[3],
-                company_level=row[4],
-                job_title=row[5],
-                referred_by=row[6],
-                email=row[7],
-                phone=row[8]
+                first_name=row[2],
+                last_name=row[3],
+                company=row[4],
+                company_level=row[5],
+                job_title=row[6],
+                referred_by=row[7],
+                email=row[8],
+                phone=row[9]
             )
             contact.id = row[0]
-            contact.mobile_phone = row[9]
-            contact.address = row[10]
-            contact.city = row[11]
-            contact.state = row[12]
-            contact.country = row[13]
-            contact.postal_code = row[14]
-            contact.website = row[15]
-            contact.source = row[16]
-            contact.status = row[17]
-            contact.notes = row[18]
-            contact.created_at = row[19]
-            contact.updated_at = row[20]
-            contact.tags = row[21].split(',') if row[21] else []
+            contact.mobile_phone = row[10]
+            contact.address = row[11]
+            contact.city = row[12]
+            contact.state = row[13]
+            contact.country = row[14]
+            contact.postal_code = row[15]
+            contact.website = row[16]
+            contact.source = row[17]
+            contact.status = row[18]
+            contact.notes = row[19]
+            contact.created_at = row[20]
+            contact.updated_at = row[21]
+            contact.tags = row[22].split(',') if row[22] else [] # Tags are now at index 22
             contacts.append(contact)
         return contacts

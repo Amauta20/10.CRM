@@ -21,24 +21,25 @@ from tkinter import filedialog # For file dialogs
 
 
 class MainWindow(tk.Tk):
-    def __init__(self):
+    def __init__(self, user, i18n):
         super().__init__()
-        self.i18n = I18n()
+        self.current_user = user
+        self.i18n = i18n
         self.theme_controller = ThemeController()
-        self.title(self.i18n.get("main_window", "title"))
+        self.title(f"{self.i18n.get('main_window', 'title')} - {self.current_user.full_name}")
         self.geometry("1200x800")
-        self.contact_controller = ContactController()
-        self.search_controller = SearchController()
-        self.tag_controller = TagController()
-        self.opportunity_controller = OpportunityController()
-        self.activity_controller = ActivityController()
+        self.contact_controller = ContactController(self.current_user)
+        self.search_controller = SearchController(self.current_user)
+        self.tag_controller = TagController() # Tags are global
+        self.opportunity_controller = OpportunityController(self.current_user)
+        self.activity_controller = ActivityController(self.current_user)
         # Pass all relevant controllers to DataTransferController
         self.data_transfer_controller = DataTransferController({
             "contact": self.contact_controller,
             "opportunity": self.opportunity_controller,
             "activity": self.activity_controller,
             "tag": self.tag_controller
-        })
+        }, self.current_user)
         
         self.create_widgets()
         self.load_contacts()

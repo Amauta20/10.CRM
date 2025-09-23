@@ -177,5 +177,22 @@
         "import_confirm": "¿Está seguro de que desea importar los datos? Esto podría modificar o eliminar datos existentes.",
         "import_success": "Datos importados exitosamente.",
         "import_error": "Error al importar datos"
+    },
+    "login_window": {
+        "title": "Iniciar Sesión",
+        "username_label": "Usuario:",
+        "password_label": "Contraseña:",
+        "login_button": "Iniciar Sesión",
+        "register_button": "Registrar",
+        "empty_fields_error": "Por favor, ingrese usuario y contraseña.",
+        "invalid_credentials_error": "Credenciales inválidas. Inténtelo de nuevo."
+    },
+    "register_window": {
+        "title": "Registrar Nuevo Usuario",
+        "username_prompt": "Ingrese un nombre de usuario:",
+        "fullname_prompt": "Ingrese su nombre completo:",
+        "password_prompt": "Ingrese una contraseña:",
+        "success_message": "Usuario registrado exitosamente. Ahora puede iniciar sesión.",
+        "generic_error": "Ocurrió un error durante el registro:"
     }
 }

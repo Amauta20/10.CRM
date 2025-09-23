@@ -1,8 +1,15 @@
-
+-- Tabla de Usuarios
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL,
+    full_name TEXT
+);
 
 -- Tabla de Contactos
 CREATE TABLE IF NOT EXISTS contacts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
     first_name TEXT NOT NULL,
     last_name TEXT NOT NULL,
     company TEXT,
@@ -22,12 +29,14 @@ CREATE TABLE IF NOT EXISTS contacts (
     status TEXT DEFAULT 'Cliente potencial',
     notes TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 -- Tabla de Oportunidades
 CREATE TABLE IF NOT EXISTS opportunities (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
     title TEXT NOT NULL,
     contact_id INTEGER NOT NULL,
     value REAL NOT NULL,
@@ -35,15 +44,16 @@ CREATE TABLE IF NOT EXISTS opportunities (
     probability INTEGER DEFAULT 10,
     close_date DATE,
     description TEXT,
-    assigned_to TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (contact_id) REFERENCES contacts (id)
 );
 
 -- Tabla de Actividades
 CREATE TABLE IF NOT EXISTS activities (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
     type TEXT NOT NULL, -- 'call', 'email', 'meeting', 'task'
     subject TEXT NOT NULL,
     description TEXT,
@@ -53,12 +63,14 @@ CREATE TABLE IF NOT EXISTS activities (
     completed BOOLEAN DEFAULT FALSE,
     completed_date DATETIME,
     priority TEXT DEFAULT 'media',
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 -- Tabla de Interacciones
 CREATE TABLE IF NOT EXISTS interactions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
     contact_id INTEGER NOT NULL,
     type TEXT NOT NULL,
     subject TEXT,
@@ -66,6 +78,7 @@ CREATE TABLE IF NOT EXISTS interactions (
     date DATETIME DEFAULT CURRENT_TIMESTAMP,
     duration INTEGER, -- in minutes
     outcome TEXT,
+    FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (contact_id) REFERENCES contacts (id)
 );
 
@@ -81,6 +94,6 @@ CREATE TABLE IF NOT EXISTS contact_tags (
     contact_id INTEGER,
     tag_id INTEGER,
     PRIMARY KEY (contact_id, tag_id),
-    FOREIGN KEY (contact_id) REFERENCES contacts (id),
-    FOREIGN KEY (tag_id) REFERENCES tags (id)
+    FOREIGN KEY (contact_id) REFERENCES contacts (id) ON DELETE CASCADE,
+    FOREIGN KEY (tag_id) REFERENCES tags (id) ON DELETE CASCADE
 );

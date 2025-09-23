@@ -140,5 +140,22 @@
         "select_tag_error": "Please select a tag to edit.",
         "select_opportunity_error": "Please select an opportunity to edit.",
         "select_activity_error": "Please select an activity to edit."
+    },
+    "login_window": {
+        "title": "Login",
+        "username_label": "Username:",
+        "password_label": "Password:",
+        "login_button": "Login",
+        "register_button": "Register",
+        "empty_fields_error": "Please enter username and password.",
+        "invalid_credentials_error": "Invalid credentials. Please try again."
+    },
+    "register_window": {
+        "title": "Register New User",
+        "username_prompt": "Enter a username:",
+        "fullname_prompt": "Enter your full name:",
+        "password_prompt": "Enter a password:",
+        "success_message": "User registered successfully. You can now log in.",
+        "generic_error": "An error occurred during registration:"
     }
 }

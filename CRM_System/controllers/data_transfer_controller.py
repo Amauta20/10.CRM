@@ -9,9 +9,10 @@ from ..models.activity import Activity
 from ..models.tag import Tag
 
 class DataTransferController:
-    def __init__(self, controllers):
+    def __init__(self, controllers, user):
         self.db_controller = DatabaseController()
         self.controllers = controllers # Dictionary of other controllers (contact, opportunity, etc.)
+        self.current_user = user
 
         # Mapping of table names to their respective model and controller for data retrieval/creation
         self.table_mappings = {
@@ -95,7 +96,11 @@ class DataTransferController:
                 for table_name in reversed(selected_tables):
                     mapping = self.table_mappings.get(table_name)
                     if mapping and mapping.get("clear_method"):
-                        mapping["clear_method"]()
+                        # Pass user_id to clear_method if it supports it
+                        if table_name in ["contacts", "opportunities", "activities"]:
+                            mapping["clear_method"](self.current_user.id)
+                        else:
+                            mapping["clear_method"]()
             
             # Import data in a specific order to respect foreign key constraints
             # Assuming a general order: tags, contacts, opportunities, activities
@@ -106,6 +111,10 @@ class DataTransferController:
                     mapping = self.table_mappings.get(table_name)
                     if mapping:
                         for item_data in all_data[table_name]:
+                            # Inject user_id into item_data before creating/updating
+                            if table_name in ["contacts", "opportunities", "activities"]:
+                                item_data['user_id'] = self.current_user.id
+
                             if import_option == "append":
                                 mapping["create_method"](item_data)
                             elif import_option == "replace":

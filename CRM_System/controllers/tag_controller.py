@@ -2,8 +2,9 @@ from ..models.tag import Tag
 from ..controllers.database_controller import DatabaseController
 
 class TagController:
-    def __init__(self):
+    def __init__(self, user):
         self.db_controller = DatabaseController()
+        self.current_user = user # Tags are global, but contact-tag assignments are user-scoped
 
     def create_tag(self, tag_data):
         try:
@@ -45,6 +46,9 @@ class TagController:
         self.db_controller.execute_query(query, params)
 
     def clear_tags(self):
+        # This clears all tags, which might not be desired if tags are global.
+        # If tags are global, this method should probably not exist or be restricted.
+        # For now, assuming it clears all tags for all users.
         # First, remove associations in contact_tags table
         query_contact_tags = "DELETE FROM contact_tags WHERE tag_id IN (SELECT id FROM tags)"
         self.db_controller.execute_query(query_contact_tags)
@@ -65,6 +69,12 @@ class TagController:
         self.db_controller.execute_query(query_tags, params_tags)
 
     def assign_tag_to_contact(self, contact_id, tag_id):
+        # Verify contact belongs to current user
+        contact_check_query = "SELECT id FROM contacts WHERE id = ? AND user_id = ?"
+        contact_check_params = (contact_id, self.current_user.id)
+        if not self.db_controller.execute_query(contact_check_query, contact_check_params):
+            raise ValueError("Contact does not belong to the current user.")
+
         query = "SELECT * FROM contact_tags WHERE contact_id = ? AND tag_id = ?"
         params = (contact_id, tag_id)
         result = self.db_controller.execute_query(query, params)
@@ -74,11 +84,23 @@ class TagController:
             self.db_controller.execute_query(query, params)
 
     def unassign_tag_from_contact(self, contact_id, tag_id):
+        # Verify contact belongs to current user
+        contact_check_query = "SELECT id FROM contacts WHERE id = ? AND user_id = ?"
+        contact_check_params = (contact_id, self.current_user.id)
+        if not self.db_controller.execute_query(contact_check_query, contact_check_params):
+            raise ValueError("Contact does not belong to the current user.")
+
         query = "DELETE FROM contact_tags WHERE contact_id = ? AND tag_id = ?"
         params = (contact_id, tag_id)
         self.db_controller.execute_query(query, params)
 
     def get_tag_names_for_contact(self, contact_id):
+        # Verify contact belongs to current user
+        contact_check_query = "SELECT id FROM contacts WHERE id = ? AND user_id = ?"
+        contact_check_params = (contact_id, self.current_user.id)
+        if not self.db_controller.execute_query(contact_check_query, contact_check_params):
+            return [] # Or raise an error, depending on desired behavior
+
         query = """
             SELECT t.name, t.color
             FROM tags t
@@ -91,6 +113,12 @@ class TagController:
         return [{'name': row[0], 'color': row[1]} for row in results]
 
     def get_tags_for_contact(self, contact_id):
+        # Verify contact belongs to current user
+        contact_check_query = "SELECT id FROM contacts WHERE id = ? AND user_id = ?"
+        contact_check_params = (contact_id, self.current_user.id)
+        if not self.db_controller.execute_query(contact_check_query, contact_check_params):
+            return [] # Or raise an error
+
         query = """
             SELECT t.id, t.name, t.color
             FROM tags t
@@ -102,6 +130,12 @@ class TagController:
         return [{'id': row[0], 'name': row[1], 'color': row[2]} for row in results]
 
     def set_tags_for_contact(self, contact_id, new_tag_ids):
+        # Verify contact belongs to current user
+        contact_check_query = "SELECT id FROM contacts WHERE id = ? AND user_id = ?"
+        contact_check_params = (contact_id, self.current_user.id)
+        if not self.db_controller.execute_query(contact_check_query, contact_check_params):
+            raise ValueError("Contact does not belong to the current user.")
+
         # Get current tags for the contact
         current_tags = self.get_tags_for_contact(contact_id)
         current_tag_ids = {tag['id'] for tag in current_tags}

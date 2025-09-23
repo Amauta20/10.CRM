@@ -1,20 +1,22 @@
 from typing import List, Dict
 from CRM_System.controllers.database_controller import DatabaseController
+from CRM_System.models.contact import Contact # Import the Contact model
 
 class SearchController:
-    def __init__(self):
+    def __init__(self, user):
         self.db_controller = DatabaseController()
+        self.current_user = user
 
-    def search_contacts(self, query: str, filters: Dict = None) -> List[Dict]:
+    def search_contacts(self, query: str, filters: Dict = None) -> List[Contact]:
         """Búsqueda avanzada en contactos"""
         search_terms = query.split()
         base_query = """
             SELECT c.* FROM contacts c
-            WHERE (
+            WHERE c.user_id = ? AND (
         """
         
         conditions = []
-        params = []
+        params = [self.current_user.id]
         
         for term in search_terms:
             conditions.append("""
@@ -42,26 +44,30 @@ class SearchController:
     def _format_contact_results(self, results):
         contacts = []
         for row in results:
-            contacts.append({
-                "id": row[0],
-                "first_name": row[1],
-                "last_name": row[2],
-                "company": row[3],
-                "job_title": row[4],
-                "email": row[5],
-                "phone": row[6],
-                "mobile_phone": row[7],
-                "address": row[8],
-                "city": row[9],
-                "state": row[10],
-                "country": row[11],
-                "postal_code": row[12],
-                "website": row[13],
-                "source": row[14],
-                "status": row[15],
-                "assigned_to": row[16],
-                "notes": row[17],
-                "created_at": row[18],
-                "updated_at": row[19],
-            })
+            # Adjust indices due to new user_id column at index 1
+            contact = Contact(
+                first_name=row[2],
+                last_name=row[3],
+                company=row[4],
+                company_level=row[5],
+                job_title=row[6],
+                referred_by=row[7],
+                email=row[8],
+                phone=row[9]
+            )
+            contact.id = row[0]
+            contact.mobile_phone = row[10]
+            contact.address = row[11]
+            contact.city = row[12]
+            contact.state = row[13]
+            contact.country = row[14]
+            contact.postal_code = row[15]
+            contact.website = row[16]
+            contact.source = row[17]
+            contact.status = row[18]
+            contact.notes = row[19]
+            contact.created_at = row[20]
+            contact.updated_at = row[21]
+            # Tags are not directly in the contact row, so we skip them here
+            contacts.append(contact)
         return contacts
