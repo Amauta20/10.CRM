@@ -30,7 +30,7 @@ class MainWindow(tk.Tk):
         self.geometry("1200x800")
         self.contact_controller = ContactController(self.current_user)
         self.search_controller = SearchController(self.current_user)
-        self.tag_controller = TagController() # Tags are global
+        self.tag_controller = TagController(self.current_user) # Tags are global
         self.opportunity_controller = OpportunityController(self.current_user)
         self.activity_controller = ActivityController(self.current_user)
         # Pass all relevant controllers to DataTransferController
